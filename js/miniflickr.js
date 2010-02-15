@@ -1,4 +1,4 @@
-// JavaScript Document
+// JavaScript Document..
 jQuery(function($){
 	//image folder
 	var imgs_url = theblogurl+'/wp-content/plugins/flickr-mini-gallery/images';
@@ -87,5 +87,3 @@ jQuery(function($){
 		initialize_flickr()	;
 	});
 });
-
-

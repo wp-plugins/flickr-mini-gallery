@@ -21,7 +21,6 @@
 	 */
 	 
 	var imgs_url = theblogurl+'/wp-content/plugins/flickr-mini-gallery/images';
-	console.log(imgs_url);
 	$.fn.lightBox = function(settings) {
 		// Settings to configure the jQuery lightBox plugin how you like
 		settings = jQuery.extend({
