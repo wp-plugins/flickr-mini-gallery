@@ -2,7 +2,7 @@
 /*
 Plugin Name: Flickr mini gallery
 Plugin URI: http://wordpress.org/#
-Description: This plugin is a gallery generator / lightbox view combo. Very easy to add to your post or page [miniflickr user="your_user_code" tags="tag1&tag2"] choose between 2 rollover modes title or thumbnail
+Description: This plugin is a gallery generator / lightbox view combo. Very easy to add to your post or page [miniflickr user="your_user_code" tags="tag1&tag2"]
 Author: Felipe Skroski	
 Licence:GPL 3
 Version: 1.1
