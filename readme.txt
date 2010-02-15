@@ -4,7 +4,7 @@ Donate link: http://www.felipesk.com/flickr-mini-gallery/
 Plugin URI: http://www.felipesk.com/flickr-mini-gallery/
 Tags: flickr, gallery, photos, ajax, image, images, photo
 Requires at least: 2.5
-Tested up to: 1.0
+Tested up to: 1.1
 Stable tag: trunk
 
 ==Description==
@@ -12,6 +12,16 @@ Stable tag: trunk
 Mini flickr gallery is a easy way to embed super flexible galeries from any flickr account or group, using different parameters to customise it.
 
 This plugin is a gallery generator / lightbox view combo. Very easy to add to your post or page. Type a little code like [miniflickr user="yourusercode" tags="tag1&tag2"] and done. You'll have a super flexible gallery on your post
+
+==Changelog==
+
+Version 1.1
+
+   1. using jquery from wordpress(wp_enqueue_script('jquery')) and encapsuled the js functions into jQuery(function($) to avoid conflicts with other plugins
+   2. added a special class on the thumbnails .flickr-mini-gallery-thumb so it easier to style or run scripts on it
+   3. added image titles on the title tag
+   4. Fixed the thumbnail/square selector on the admin
+   5. 
 
 
 ==Installation==
@@ -127,6 +137,11 @@ The plugin uses javascript to build the gallery but if the client (browser, emai
 
 = Internationalization =
 The plugin is compatible with xlanguage plugin, use the parameter lang if you need to show a gallery just in a specific language.
+
+= Image enlargement on rollover =
+You can choose 2 hover modes only the title or enlarge the thumbnail
+
+
 
 
 == Support ==

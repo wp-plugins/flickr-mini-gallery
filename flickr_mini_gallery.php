@@ -2,10 +2,10 @@
 /*
 Plugin Name: Flickr mini gallery
 Plugin URI: http://wordpress.org/#
-Description: This plugin is a gallery generator / lightbox view combo. Very easy to add to your post or page [miniflickr user="your_user_code" tags="tag1&tag2"]
+Description: This plugin is a gallery generator / lightbox view combo. Very easy to add to your post or page [miniflickr user="your_user_code" tags="tag1&tag2"] choose between 2 rollover modes title or thumbnail
 Author: Felipe Skroski	
 Licence:GPL 3
-Version: 1.0
+Version: 1.1
 Author URI: www.felipesk.com
 */
 
@@ -29,24 +29,21 @@ Author URI: www.felipesk.com
 
 
 
+
 //add jquery and lightbox
 function jquery_lightbox_scripts(){
-	$path = '/wp-content/plugins/flickr-mini-gallery/js';
-	if (function_exists('wp_enqueue_script')) {
-		wp_deregister_script('jquery');
-		//wp_enqueue_script('jquery');
-		$opts = mfg_get_options();
-		$format = $opts['mfg_thumbformat'];
-		wp_enqueue_script('jquery', $path.'/jquery-1.2.6.pack.js', false, '1.2.6');
-		echo '<script type="text/javascript">
+	$path = WP_PLUGIN_URL.'/flickr-mini-gallery/';
+	wp_enqueue_script('jquery');
+	$opts = mfg_get_options();
+	$format = $opts['mfg_thumbformat'];
+	echo '<script type="text/javascript">
 			var theblogurl ="'.get_bloginfo('url').'";
 			var flickr_mini_gallery_img_format ="'.$format.'";
 		</script>';
-		echo '<link rel="stylesheet" type="text/css" href="/wp-content/plugins/flickr-mini-gallery/css/jquery.lightbox-0.5.css" media="screen" />';
-		wp_enqueue_script('jquerylightbox', $path.'/jquery.lightbox-0.5.js', array('jquery'),'0.5');
-		wp_enqueue_script('miniflickr', $path.'/miniflickr.js', array('jquery'),'0.1');
-	}
-	
+	echo '<link rel="stylesheet" type="text/css" href="'.$path.'css/jquery.lightbox-0.5.css" media="screen" />';
+	echo '<link rel="stylesheet" type="text/css" href="'.$path.'css/flickr-mini-gallery.css" media="screen" />';
+	wp_enqueue_script('jquerylightbox', $path.'js/jquery.lightbox-0.5.js', array('jquery'),'0.5');
+	wp_enqueue_script('miniflickr', $path.'js/miniflickr.js', array('jquery'),'0.1');
 }
 
 add_action('wp_head', 'jquery_lightbox_scripts',5);
@@ -57,6 +54,8 @@ function build_mini_gallery($atts, $content='Loading... mini-flickr-gallery by F
 	$opts = mfg_get_options();
 	$usr = $opts['mfg_userid'];
 	$lang = $opts['mfg_language'];
+	$format = $opts['mfg_thumbformat'];
+	$hover = $opts['mfg_hover'];
 	extract(shortcode_atts(array(
 		'lang' 				=>'',
 		'user_id' 			=> $usr,
@@ -76,16 +75,22 @@ function build_mini_gallery($atts, $content='Loading... mini-flickr-gallery by F
 		'radius_units'		=>'',
 		'per_page'			=>'30',
 		'content'			=>$content,
+		'hover'				=>$hover,
 	), $atts));
+	//echo($hover);
 	$lang = "{$lang}";
 	if(function_exists(xlanguage_current_language_code)){
 		$code = xlanguage_current_language_code();
 	}else{
 		$code = $lang;
 	}
-	
+	if($hover == "yes"){
+		$class = "fmg-hover-image";
+	}else{
+		$class = "";
+	}
 	if($code == $lang or $lang==''){
-		$flickr_gal = "<div class=\"flickr-mini-gallery\" rel=\"user_id={$user_id}&tags={$tags}&min_upload_date={$min_upload_date}&max_upload_date={$max_upload_date}&min_taken_date={$min_taken_date}&max_taken_date={$max_taken_date}&sort={$sort}&bbox={$bbox}&safe_search={$safe_search}&content_type={$content_type}&group_id={$group_id}&lat={$lat}&lon={$lon}&radius_units={$radius_units}&per_page={$per_page}\">{$content}</div>";
+		$flickr_gal = "<div class='flickr-mini-gallery ".$class."' lang=".$format." rel=\"user_id={$user_id}&tags={$tags}&min_upload_date={$min_upload_date}&max_upload_date={$max_upload_date}&min_taken_date={$min_taken_date}&max_taken_date={$max_taken_date}&sort={$sort}&bbox={$bbox}&safe_search={$safe_search}&content_type={$content_type}&group_id={$group_id}&lat={$lat}&lon={$lon}&radius_units={$radius_units}&per_page={$per_page}\">{$content}</div>";
 	}else{
 		$flickr_gal ="";
 	}
@@ -99,17 +104,20 @@ add_shortcode('miniflickr', 'build_mini_gallery');
 function mfg_get_options() {
 	$mfg_userid = get_option('mfg_userid');
 	$mfg_thumbformat = get_option('mfg_thumbformat');
-
+	$mfg_hover = get_option('mfg_hover');
 	
 	// Extra paranoia:
 	if(empty($mfg_userid))
 		$mfg_userid = '';
 	if(empty($mfg_thumbformat))
 		$mfg_thumbformat = '_s';
+	if(empty($mfg_hover))
+		$mfg_hover = 'no';
 		
 	return array(
 		'mfg_userid' => $mfg_userid,
 		'mfg_thumbformat' => $mfg_thumbformat,
+		'mfg_hover' => $mfg_hover,
 	);
 }
 
@@ -131,6 +139,8 @@ function mfg_options_page() {
 	if($_POST['action'] == 'update'){
 		update_option('mfg_userid', $_POST['mfg_userid'] );
 		update_option('mfg_thumbformat', $_POST['mfg_thumbformat'] );
+		update_option('mfg_hover', $_POST['mfg_hover'] );
+		
 		?><div class="updated"><p><strong><?php _e('Options saved.', 'eg_trans_domain' ); ?></strong></p></div><?php
 	};
 
@@ -140,7 +150,7 @@ function mfg_options_page() {
 		<form method='post'>
 			<?php wp_nonce_field('miniflickrgallery_options'); ?>
 			<input type="hidden" name="action" value="update" />
-			<input type="hidden" name="page_options" value="mfg_userid,mfg_thumbformat,mfg_language" />
+			<input type="hidden" name="page_options" value="mfg_userid,mfg_thumbformat,mfg_language,mfg_hover" />
 			<table class="form-table">
 				<tbody>
 					<tr valign="top">
@@ -163,6 +173,18 @@ function mfg_options_page() {
 								</select>
 								<br/>
 						Square is 75px x 75px and Thumbnail is 100px max						</p></td>
+					</tr>
+					
+					<tr valign="top">
+					<th scope="row"><?php _e("Enlarge image on rolover?", 'eg_trans_domain' ); ?></th>
+						<td>
+							<p>
+							<?php $hover = get_option('mfg_hover'); ?>
+									<input type="radio" name="mfg_hover"value ="no" <?php if($hover == "no")echo 'checked'; ?>>No
+  									<input type="radio" name="mfg_hover" value ="yes" <?php if($hover == "yes")echo 'checked'; ?>>Yes
+								
+								<br/>
+						choose if you want to show the image enlarge on rollover						</p></td>
 					</tr>
 					
 					
