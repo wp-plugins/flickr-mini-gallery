@@ -1,4 +1,4 @@
-// JavaScript Document..
+// JavaScript Document
 jQuery(function($){
 	//image folder
 	var imgs_url = theblogurl+'/wp-content/plugins/flickr-mini-gallery/images';
@@ -13,8 +13,9 @@ jQuery(function($){
 					$(this).empty();					 
 					var filter = $(this).attr('rel');
 					var format = $(this).attr("lang");
-					var hasTitle = $(this).hasClass("fmg-hover-image'");
-					build_gallery(filter, this, format, hasTitle);
+					var hasTitle = $(this).hasClass("fmg-hover-image");
+					var is_photoset = $(this).attr('longdesc');
+					build_gallery(filter, this, format, hasTitle, is_photoset);
 					
 			});
 			
@@ -22,18 +23,33 @@ jQuery(function($){
 		
 		
 	}
-	function build_gallery(filter, obj, format, hasTitle){
-	  var api = "http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=36c8b00c47e8934ff302dcad7775d0a2&tag_mode=all&"+filter; 
+	function build_gallery(filter, obj, format, hasTitle, is_photoset){
+	  if(is_photoset == "photoset"){
+	  	var api = "http://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=36c8b00c47e8934ff302dcad7775d0a2&"+filter;
+	  }else{
+	  	var api = "http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=36c8b00c47e8934ff302dcad7775d0a2&tag_mode=all&"+filter; 
+	  }
 		$.getJSON(api+"&format=json&jsoncallback=?",
 	        function(data){
-	          $.each(data.photos.photo, function(i,item){
-		          if(hasTitle){
-		          	var attrib = {src: "http://static.flickr.com/"+item.server+"/"+item.id+"_"+item.secret+format+".jpg", alt:item.title}
-		          }else{
-		          	var attrib = {src: "http://static.flickr.com/"+item.server+"/"+item.id+"_"+item.secret+format+".jpg", alt:item.title, title:item.title}
-		          }
-			  $("<img/>").attr(attrib).appendTo(obj).wrap("<a href=http://static.flickr.com/"+item.server+"/"+item.id+"_"+item.secret+".jpg alt="+item.id+"></a>").addClass("flickr-mini-gallery-thumb");
-	         });
+		        if(is_photoset == "photoset"){
+		        	
+		        	$.each(data.photoset.photo, function(i,item){   
+		        	if(typeof item.description != "undefined"){var description = item.description._content;}else{var description = "";}
+		        	if(hasTitle){var titleImg = '';}else{var titleImg = item.title;}
+				      var attrib = {src: "http://farm"+item.farm+".static.flickr.com/"+item.server+"/"+item.id+"_"+item.secret+format+".jpg", alt:item.title, longdesc:"http://www.flickr.com/photos/"+data.photoset.owner+"/"+item.id, rel:description, title:titleImg}
+					  $("<img/>").attr(attrib).appendTo(obj).wrap("<a href=http://farm"+item.farm+".static.flickr.com/"+item.server+"/"+item.id+"_"+item.secret+".jpg alt="+item.id+"></a>").addClass("flickr-mini-gallery-thumb");
+			         });
+		        }else{
+		        	$.each(data.photos.photo, function(i,item){
+		        		if(typeof item.description != "undefined"){var description = item.description._content;}else{var description = "";}
+		        		if(hasTitle){var titleImg = '';}else{var titleImg = item.title;}
+				       var attrib = {src: "http://farm"+item.farm+".static.flickr.com/"+item.server+"/"+item.id+"_"+item.secret+format+".jpg", alt:item.title, longdesc:"http://www.flickr.com/photos/"+item.owner+"/"+item.id, rel:description, title:titleImg}
+					  $("<img/>").attr(attrib).appendTo(obj).wrap("<a href=http://farm"+item.farm+".static.flickr.com/"+item.server+"/"+item.id+"_"+item.secret+".jpg alt="+item.id+"></a>").addClass("flickr-mini-gallery-thumb");
+			         });
+		        }
+		        
+	          
+	         
 			 $(".flickr-mini-gallery a:has(img)").lightBox();
 	      });	 
 	}
@@ -87,3 +103,5 @@ jQuery(function($){
 		initialize_flickr()	;
 	});
 });
+
+

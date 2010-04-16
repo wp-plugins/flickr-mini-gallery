@@ -2,10 +2,10 @@
 /*
 Plugin Name: Flickr mini gallery
 Plugin URI: http://wordpress.org/#
-Description: This plugin is a gallery generator / lightbox view combo. Very easy to add to your post or page [miniflickr user="your_user_code" tags="tag1&tag2"]
+Description: This plugin is a gallery generator / lightbox view combo. Very easy to add to your post or page [miniflickr user="your_user_code" tags="tag1&tag2"] or [miniflickr photoset_id="your_photoset_id" ]
 Author: Felipe Skroski	
 Licence:GPL 3
-Version: 1.1
+Version: 1.2
 Author URI: www.felipesk.com
 */
 
@@ -56,7 +56,9 @@ function build_mini_gallery($atts, $content='Loading... mini-flickr-gallery by F
 	$lang = $opts['mfg_language'];
 	$format = $opts['mfg_thumbformat'];
 	$hover = $opts['mfg_hover'];
+	$description = $opts['mfg_description'];
 	extract(shortcode_atts(array(
+		'photoset_id' 		=>'',
 		'lang' 				=>'',
 		'user_id' 			=> $usr,
 		'tags' 				=>'',
@@ -65,20 +67,25 @@ function build_mini_gallery($atts, $content='Loading... mini-flickr-gallery by F
 		'max_upload_date'	=>'', 
 		'min_taken_date'	=>'',
 		'max_taken_date'	=>'',
+		'license'			=>'',
 		'sort'				=>'',
 		'bbox'				=>'',
+		'accuracy'			=>'',
 		'safe_search'		=>'',
 		'content_type'		=>'',
+		'machine_tags'		=>'',
 		'group_id'			=>'',
 		'lat'				=>'',
 		'lon'				=>'',
 		'radius_units'		=>'',
 		'per_page'			=>'30',
+		'extras'			=>'',
 		'content'			=>$content,
 		'hover'				=>$hover,
 	), $atts));
 	//echo($hover);
 	$lang = "{$lang}";
+	$photoset_id ="{$photoset_id}";
 	if(function_exists(xlanguage_current_language_code)){
 		$code = xlanguage_current_language_code();
 	}else{
@@ -89,10 +96,18 @@ function build_mini_gallery($atts, $content='Loading... mini-flickr-gallery by F
 	}else{
 		$class = "";
 	}
+	if($description == "yes"){
+		$desc = ",description";
+	}else{
+		$desc = "";
+	}
 	if($code == $lang or $lang==''){
-		$flickr_gal = "<div class='flickr-mini-gallery ".$class."' lang=".$format." rel=\"user_id={$user_id}&tags={$tags}&min_upload_date={$min_upload_date}&max_upload_date={$max_upload_date}&min_taken_date={$min_taken_date}&max_taken_date={$max_taken_date}&sort={$sort}&bbox={$bbox}&safe_search={$safe_search}&content_type={$content_type}&group_id={$group_id}&lat={$lat}&lon={$lon}&radius_units={$radius_units}&per_page={$per_page}\">{$content}</div>";
+		$flickr_gal = "<div class='flickr-mini-gallery ".$class."' lang=".$format." rel=\"user_id={$user_id}&tags={$tags}&min_upload_date={$min_upload_date}&max_upload_date={$max_upload_date}&min_taken_date={$min_taken_date}&max_taken_date={$max_taken_date}&license={$license}&sort={$sort}&bbox={$bbox}&accuracy={$accuracy}&safe_search={$safe_search}&content_type={$content_type}&machine_tags={$machine_tags}&group_id={$group_id}&lat={$lat}&lon={$lon}&radius_units={$radius_units}&per_page={$per_page}&extras={$extras}$desc\" longdesc='photosearch'>{$content}</div>";
 	}else{
 		$flickr_gal ="";
+	}
+	if($photoset_id != ''){
+		$flickr_gal = "<div class='flickr-mini-gallery ".$class."' lang=".$format." rel=\"photoset_id={$photoset_id}&extras={$extras}$desc\" longdesc='photoset'>{$content}</div>";
 	}
 	return $flickr_gal;
 }
@@ -105,6 +120,7 @@ function mfg_get_options() {
 	$mfg_userid = get_option('mfg_userid');
 	$mfg_thumbformat = get_option('mfg_thumbformat');
 	$mfg_hover = get_option('mfg_hover');
+	$mfg_description = get_option('mfg_description');
 	
 	// Extra paranoia:
 	if(empty($mfg_userid))
@@ -113,11 +129,14 @@ function mfg_get_options() {
 		$mfg_thumbformat = '_s';
 	if(empty($mfg_hover))
 		$mfg_hover = 'no';
+	if(empty($mfg_description))
+		$mfg_description = 'no';
 		
 	return array(
 		'mfg_userid' => $mfg_userid,
 		'mfg_thumbformat' => $mfg_thumbformat,
 		'mfg_hover' => $mfg_hover,
+		'mfg_description' => $mfg_description,
 	);
 }
 
@@ -140,6 +159,7 @@ function mfg_options_page() {
 		update_option('mfg_userid', $_POST['mfg_userid'] );
 		update_option('mfg_thumbformat', $_POST['mfg_thumbformat'] );
 		update_option('mfg_hover', $_POST['mfg_hover'] );
+		update_option('mfg_description', $_POST['mfg_description'] );
 		
 		?><div class="updated"><p><strong><?php _e('Options saved.', 'eg_trans_domain' ); ?></strong></p></div><?php
 	};
@@ -185,6 +205,18 @@ function mfg_options_page() {
 								
 								<br/>
 						choose if you want to show the image enlarge on rollover						</p></td>
+					</tr>
+					
+					<tr valign="top">
+					<th scope="row"><?php _e("Add descriptions on lightbox?", 'eg_trans_domain' ); ?></th>
+						<td>
+							<p>
+							<?php $description = get_option('mfg_description'); ?>
+									<input type="radio" name="mfg_description"value ="no" <?php if($description == "no")echo 'checked'; ?>>No
+  									<input type="radio" name="mfg_description" value ="yes" <?php if($description == "yes")echo 'checked'; ?>>Yes
+								
+								<br/>
+						choose yes to display flickr descriptions on your lightbox (it may decrease the plugin performance)	</p></td>
 					</tr>
 					
 					

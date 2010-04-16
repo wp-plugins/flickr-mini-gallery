@@ -77,11 +77,21 @@
 			settings.activeImage = 0;
 			// We have an image set? Or just an image? Let´s see it.
 			if ( jQueryMatchedObj.length == 1 ) {
-				settings.imageArray.push(new Array(objClicked.getAttribute('href'),objClicked.firstChild.getAttribute('alt')));
+				settings.imageArray.push(new Array(
+				objClicked.getAttribute('href'),
+				objClicked.firstChild.getAttribute('alt'),
+				objClicked.firstChild.getAttribute('longdesc'),
+				objClicked.firstChild.getAttribute('rel')
+				));
 			} else {
 				// Add an Array (as many as we have), with href and title atributes, inside the Array that storage the images references		
 				for ( var i = 0; i < jQueryMatchedObj.length; i++ ) {
-					settings.imageArray.push(new Array(jQueryMatchedObj[i].getAttribute('href'),jQueryMatchedObj[i].firstChild.getAttribute('alt')));
+					settings.imageArray.push(new Array(
+					jQueryMatchedObj[i].getAttribute('href'),
+					jQueryMatchedObj[i].firstChild.getAttribute('alt'), 
+					jQueryMatchedObj[i].firstChild.getAttribute('longdesc'),
+					jQueryMatchedObj[i].firstChild.getAttribute('rel')
+					));
 				}
 			}
 			while ( settings.imageArray[settings.activeImage][0] != objClicked.getAttribute('href') ) {
@@ -244,11 +254,12 @@
 			$('#lightbox-container-image-data-box').slideDown('fast');
 			$('#lightbox-image-details-caption').hide();
 			if ( settings.imageArray[settings.activeImage][1] ) {
-				$('#lightbox-image-details-caption').html(settings.imageArray[settings.activeImage][1]).show();
+				$('#lightbox-image-details-caption').html(settings.imageArray[settings.activeImage][1]+"<span class='lightbox-image-details-flickrlink'><a href='"+settings.imageArray[settings.activeImage][2]+"'> &rarr; flickr</a></span>").show();
 			}
 			// If we have a image set, display 'Image X of X'
 			if ( settings.imageArray.length > 1 ) {
-				$('#lightbox-image-details-currentNumber').html(settings.txtImage + ' ' + ( settings.activeImage + 1 ) + ' ' + settings.txtOf + ' ' + settings.imageArray.length).show();
+				$('#lightbox-image-details-currentNumber').html("<p class='lightbox-image-details-description'>"+settings.imageArray[settings.activeImage][3]+"</p>"+
+				settings.txtImage + ' ' + ( settings.activeImage + 1 ) + ' ' + settings.txtOf + ' ' + settings.imageArray.length).show();
 			}		
 		}
 		/**

@@ -4,24 +4,32 @@ Donate link: http://www.felipesk.com/flickr-mini-gallery/
 Plugin URI: http://www.felipesk.com/flickr-mini-gallery/
 Tags: flickr, gallery, photos, ajax, image, images, photo
 Requires at least: 2.5
-Tested up to: 1.1
+Tested up to: 1.2
 Stable tag: trunk
 
 ==Description==
 
 Mini flickr gallery is a easy way to embed super flexible galeries from any flickr account or group, using different parameters to customise it.
 
+Now with new features on 1.2 you can also load a photoset and load descriptions of your images on the lightbox.
+
 This plugin is a gallery generator / lightbox view combo. Very easy to add to your post or page. Type a little code like [miniflickr user="yourusercode" tags="tag1&tag2"] and done. You'll have a super flexible gallery on your post
 
 ==Changelog==
 
+Version 1.2
+
+   1. Now is possible to load a photoset by its ID no need for tagging anymore
+   2. Descriptions can be loaded on the lightbox (you can turn it of on the admin)
+   3. Link back to flickr (to comply with community guidelines)
+   
+   
 Version 1.1
 
    1. using jquery from wordpress(wp_enqueue_script('jquery')) and encapsuled the js functions into jQuery(function($) to avoid conflicts with other plugins
    2. added a special class on the thumbnails .flickr-mini-gallery-thumb so it easier to style or run scripts on it
    3. added image titles on the title tag
    4. Fixed the thumbnail/square selector on the admin
-   5. 
 
 
 ==Installation==
@@ -41,6 +49,9 @@ This plugin can be installed like all the other plugin. It requires no extra con
 
 = Gets photos from all the users with these tags =
 [miniflickr tags="poster" group_id="92076845@N00" per_page="5" ]
+
+= Gets all the photos from a photoset =
+[miniflickr photoset_id="72157600010075630" ]
 
 [Check this link for more examples](http://www.felipesk.com/flickr-mini-gallery/) 
 
@@ -129,6 +140,9 @@ Number of photos to return per page. If this argument is omitted, it defaults to
 = Gets photos from all the users with these tags =
 [miniflickr tags="poster" group_id="92076845@N00" per_page="5" ]
 
+= Gets all the photos from a photoset =
+[miniflickr photoset_id="72157600010075630" ]
+
 
 == Features ==
 
@@ -140,6 +154,15 @@ The plugin is compatible with xlanguage plugin, use the parameter lang if you ne
 
 = Image enlargement on rollover =
 You can choose 2 hover modes only the title or enlarge the thumbnail
+
+= Load images from a photoset =
+Simply use [miniflickr photoset_id="ID_NUMBER_HERE" ] and you'll instantly have a photoset loaded on your page or post
+
+= Images with descriptions =
+You can load descriptions of images easily changabl on your admin
+
+= Link back to flickr =
+After enlarging the image there is a link back to flickr so users can comment and interact with your flickr account
 
 
 
