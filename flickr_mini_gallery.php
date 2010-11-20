@@ -2,10 +2,10 @@
 /*
 Plugin Name: Flickr mini gallery
 Plugin URI: http://wordpress.org/#
-Description: This plugin is a gallery generator / lightbox view combo. Very easy to add to your post or page [miniflickr user="your_user_code" tags="tag1&tag2"] or [miniflickr photoset_id="your_photoset_id" ]
+Description: This plugin is a gallery generator / lightbox view combo. Very easy to add to your post or page using short tags or the text editor
 Author: Felipe Skroski	
 Licence:GPL 3
-Version: 1.2
+Version: 1.3
 Author URI: www.felipesk.com
 */
 
